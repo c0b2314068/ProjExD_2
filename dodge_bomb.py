@@ -105,7 +105,6 @@ def homing(kk : pg.Rect, bb : pg.Rect, vx, vy) -> tuple[float, float]:
     引数:こうかとんRect, 爆弾Rect
     戻り値:爆弾のvx, vy
     vx^2 + vy^2 == 50 を満たしている
-    こうかとんと爆弾の距離が300未満の場合減速
     """
     # ベクトルを計算
     kk_x, kk_y = kk.center
