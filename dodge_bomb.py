@@ -23,10 +23,23 @@ def check_bound(obj_rct : pg.Rect) -> tuple[bool, bool]:
     return in_x, in_y
 
 
-def rotate_img(obj_img : pg.Surface, dif : list) -> pg.Surface:
+def rotate_img(obj_img : pg.Surface) -> dict[tuple[int, int] : pg.Surface]:
     """
+    引数:こうかとんSurface
+    戻り値:移動量の入ったtupleがkey
+    回転されたpg.Surfaceがvalue
     """
-    pass
+    rotation = {
+        (-5, 0) : pg.transform.rotozoom(obj_img, 0, 1.0),
+        (-5, 5) : pg.transform.rotozoom(obj_img, 45, 1.0),
+        (0, 5) : pg.transform.rotozoom(obj_img, 90, 1.0),
+        (5, 5) : pg.transform.rotozoom(obj_img, 135, 1.0),
+        (5, 0) : pg.transform.rotozoom(obj_img, 180, 1.0),
+        (5, -5) : pg.transform.rotozoom(obj_img, 225, 1.0),
+        (0, -5) : pg.transform.rotozoom(obj_img, 270, 1.0),
+        (-5, -5) : pg.transform.rotozoom(obj_img, 315, 1.0)
+    }
+    return rotation
 
 
 def bomb_zoom(obj_img : pg.Surface) -> tuple[pg.Surface]:
@@ -46,6 +59,8 @@ def bomb_zoom(obj_img : pg.Surface) -> tuple[pg.Surface]:
 
 def bomb_acc() -> tuple:
     """
+    引数:なし
+    戻り値:(1, 2, ... 9, 10)
     """
     accs = [a for a in range(1, 11)]
     return tuple(accs)
@@ -69,24 +84,16 @@ def main():
 
     clock = pg.time.Clock()
     tmr = 0
-    #移動量辞書 {押下キー : (x変化量, y変化量)}
+    # 移動量辞書 {押下キー : (x変化量, y変化量)}
     DIF = {
         pg.K_UP : (0, -5),
         pg.K_DOWN : (0, 5),
         pg.K_LEFT : (-5, 0),
         pg.K_RIGHT : (5, 0)
     }
-    #回転辞書
-    ROT = {
-        (-5, 0) : pg.transform.rotozoom(kk_img, 0, 1.0),
-        (-5, 5) : pg.transform.rotozoom(kk_img, 45, 1.0),
-        (0, 5) : pg.transform.rotozoom(kk_img, 90, 1.0),
-        (5, 5) : pg.transform.rotozoom(kk_img, 135, 1.0),
-        (5, 0) : pg.transform.rotozoom(kk_img, 180, 1.0),
-        (5, -5) : pg.transform.rotozoom(kk_img, 225, 1.0),
-        (0, -5) : pg.transform.rotozoom(kk_img, 270, 1.0),
-        (-5, -5) : pg.transform.rotozoom(kk_img, 315, 1.0)
-    }
+
+    # 回転辞書を取得
+    ROT = rotate_img(kk_img)
     
     # 加速度リストを取得
     bomb_accs = bomb_acc()
@@ -130,6 +137,10 @@ def main():
         # こうかとんと爆弾の衝突判定
         if kk_rct.colliderect(bomb_rct):
             return
+        
+        # こうかとんの向きを変える
+        if tuple(sum_mv) in ROT:
+            kk_img = ROT[tuple(sum_mv)]
 
         screen.blit(kk_img, kk_rct)
         screen.blit(bomb_img, bomb_rct)
