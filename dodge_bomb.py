@@ -23,10 +23,29 @@ def check_bound(obj_rct : pg.Rect) -> tuple[bool, bool]:
     return in_x, in_y
 
 
-def rotate_img(obj_sfc : pg.Surface, dif : list) -> pg.Surface:
+def rotate_img(obj_img : pg.Surface, dif : list) -> pg.Surface:
     """
     """
     pass
+
+
+def bomb_zoom(obj_img : pg.Surface) -> tuple:
+    """
+    """
+    obj_imgs = []
+    for r in range(1, 11):
+        obj_img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(obj_img, (255, 0, 0), (10*r, 10*r), 10*r)
+        obj_img.set_colorkey((0, 0, 0))
+        obj_imgs.append(obj_img)
+    return tuple(obj_imgs)
+
+
+def bomb_acc() -> tuple:
+    """
+    """
+    accs = [a for a in range(1, 11)]
+    return tuple(accs)
 
 
 def main():
@@ -38,10 +57,10 @@ def main():
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
 
-    bomb_sfc = pg.Surface((20, 20))
-    pg.draw.circle(bomb_sfc, (255, 0, 0), (10, 10), 10)
-    bomb_sfc.set_colorkey((0, 0, 0))
-    bomb_rct = bomb_sfc.get_rect()
+    bomb_img = pg.Surface((20, 20))
+    pg.draw.circle(bomb_img, (255, 0, 0), (10, 10), 10)
+    bomb_img.set_colorkey((0, 0, 0))
+    bomb_rct = bomb_img.get_rect()
     bomb_rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
     vx, vy = 5, 5
 
@@ -66,6 +85,11 @@ def main():
         (-5, -5) : pg.transform.rotozoom(kk_img, 315, 1.0)
     }
 
+    # 拡大爆弾Surfaceリストを取得
+    bomb_imgs = bomb_zoom(bomb_img)
+    # 加速度リストを取得
+    bomb_accs = bomb_acc()
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT: 
@@ -83,6 +107,9 @@ def main():
         kk_in = check_bound(kk_rct)
         if kk_in != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
+        
+        # 爆弾の大きさを更新
+        bomb_img = bomb_imgs[min(tmr//300, 9)]
 
         # 爆弾の境界判定と移動
         bomb_in_x, bomb_in_y = check_bound(bomb_rct)
@@ -90,14 +117,18 @@ def main():
             vx *= -1
         if not bomb_in_y:
             vy *= -1
-        bomb_rct.move_ip(vx, vy)
+        
+        # 爆弾の加速
+        avx = vx*bomb_accs[min(tmr//250, 9)]
+        avy = vy*bomb_accs[min(tmr//300, 9)]
+        bomb_rct.move_ip(avx, avy)
 
-        #こうかとんと爆弾の衝突判定
+        # こうかとんと爆弾の衝突判定
         if kk_rct.colliderect(bomb_rct):
             return
 
         screen.blit(kk_img, kk_rct)
-        screen.blit(bomb_sfc, bomb_rct)
+        screen.blit(bomb_img, bomb_rct)
         pg.display.update()
         tmr += 1
         clock.tick(60)
