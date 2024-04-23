@@ -74,9 +74,9 @@ def game_over(screen : pg.Surface):
     ゲームオーバー画面を表示する
     """
     #半透明黒背景
-    black_screen_img = pg.Surface((WIDTH, HEIGHT))
-    pg.draw.rect(black_screen_img, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
-    black_screen_img.set_alpha(150)
+    translucent_img = pg.Surface((WIDTH, HEIGHT))
+    pg.draw.rect(translucent_img, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
+    translucent_img.set_alpha(150)
 
     #こうかとん画像
     kk_img = pg.image.load("fig/8.png")
@@ -92,7 +92,7 @@ def game_over(screen : pg.Surface):
     txt_rct = txt_img.get_rect()
     txt_rct.center = WIDTH/2, HEIGHT/2
 
-    screen.blit(black_screen_img, (0, 0))
+    screen.blit(translucent_img, (0, 0))
     screen.blit(txt_img, txt_rct)
     screen.blit(kk_img, kk_rct)
     screen.blit(kk_img2, kk_rct2)
