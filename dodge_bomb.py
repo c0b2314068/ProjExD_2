@@ -118,10 +118,10 @@ def homing(kk : pg.Rect, bb : pg.Rect, vx, vy) -> tuple[float, float]:
     norm_dif_x = dif_x / normalizer
     norm_dif_y = dif_y / normalizer
 
-    # 慣性
-    if((dif_x**2 + dif_y**2)**(1/2) < 300):
-        norm_dif_x *= 0.5
-        norm_dif_y *= 0.5
+    # # 慣性
+    # if((dif_x**2 + dif_y**2)**(1/2) < 300):
+    #     norm_dif_x *= 0.5
+    #     norm_dif_y *= 0.5
     
     return (norm_dif_x, norm_dif_y)
 
@@ -181,7 +181,7 @@ def main():
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         
         # 爆弾の大きさを更新
-        bomb_img = bomb_imgs[min(tmr//300, 9)]
+        bomb_img = bomb_imgs[min(tmr//500, 9)]
 
         # 爆弾の境界判定と移動
         bomb_in_x, bomb_in_y = check_bound(bomb_rct)
@@ -194,8 +194,8 @@ def main():
         vx, vy = homing(kk_rct, bomb_rct, vx, vy)
 
         # 爆弾の加速
-        avx = vx*bomb_accs[min(tmr//250, 9)]
-        avy = vy*bomb_accs[min(tmr//300, 9)]
+        avx = vx*bomb_accs[min(tmr//500, 9)]
+        avy = vy*bomb_accs[min(tmr//500, 9)]
         bomb_rct.move_ip(avx, avy)
 
         # こうかとんと爆弾の衝突判定
