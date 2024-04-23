@@ -3,7 +3,8 @@ import sys
 import pygame as pg
 
 
-WIDTH, HEIGHT = 1600, 900
+# WIDTH, HEIGHT = 1600, 900
+WIDTH, HEIGHT = 1024, 576
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
