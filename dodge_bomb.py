@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import time
 import pygame as pg
 
 
@@ -66,15 +67,29 @@ def bomb_acc() -> tuple:
     return tuple(accs)
 
 
-# def game_over(screen : pg.Surface):
-#     pg.draw.rect(screen, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
-#     screen.set_alpha(50)
-#     clock = pg.time.Clock()
-#     tmr = 0
-#     while(tmr < 300):
-#         tmr += 1
-#         pg.display.update()
-#         clock.tick(60)
+def game_over(screen : pg.Surface):
+    black_screen_img = pg.Surface((WIDTH, HEIGHT))
+    pg.draw.rect(black_screen_img, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
+    black_screen_img.set_alpha(150)
+
+    kk_img = pg.image.load("fig/8.png")
+    kk_img2 = pg.image.load("fig/8.png")
+    kk_rct = kk_img.get_rect()
+    kk_rct2 = kk_img.get_rect()
+    kk_rct.center = WIDTH/2 - 200, HEIGHT/2
+    kk_rct2.center = WIDTH/2 + 200, HEIGHT/2
+
+    fonto = pg.font.Font(None, 80)
+    txt_img = fonto.render("Game Over", True, (255, 255, 255))
+    txt_rct = txt_img.get_rect()
+    txt_rct.center = WIDTH/2, HEIGHT/2
+
+    screen.blit(black_screen_img, (0, 0))
+    screen.blit(txt_img, txt_rct)
+    screen.blit(kk_img, kk_rct)
+    screen.blit(kk_img2, kk_rct2)
+    pg.display.update()
+    time.sleep(5)
 
 
 def homing(kk : pg.Rect, bb : pg.Rect) -> tuple[float, float]:
@@ -91,11 +106,8 @@ def homing(kk : pg.Rect, bb : pg.Rect) -> tuple[float, float]:
     # if((dif_x**2 + dif_y**2)**(1/2) < 300):
     #     norm_dif_x += -1
     #     norm_dif_y += -1
-    print((norm_dif_x**2 + norm_dif_y**2))
+    print((norm_dif_x**2 + norm_dif_y**2)**(1/2))
     return (norm_dif_x, norm_dif_y)
-
-
-
 
 
 def main():
@@ -172,6 +184,7 @@ def main():
 
         # こうかとんと爆弾の衝突判定
         if kk_rct.colliderect(bomb_rct):
+            game_over(screen)
             return
         
         # こうかとんの向きを変える
