@@ -68,10 +68,17 @@ def bomb_acc() -> tuple:
 
 
 def game_over(screen : pg.Surface):
+    """
+    引数:背景Surface
+    戻り値:なし
+    ゲームオーバー画面を表示する
+    """
+    #半透明黒背景
     black_screen_img = pg.Surface((WIDTH, HEIGHT))
     pg.draw.rect(black_screen_img, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
     black_screen_img.set_alpha(150)
 
+    #こうかとん画像
     kk_img = pg.image.load("fig/8.png")
     kk_img2 = pg.image.load("fig/8.png")
     kk_rct = kk_img.get_rect()
@@ -79,6 +86,7 @@ def game_over(screen : pg.Surface):
     kk_rct.center = WIDTH/2 - 200, HEIGHT/2
     kk_rct2.center = WIDTH/2 + 200, HEIGHT/2
 
+    #文字画像
     fonto = pg.font.Font(None, 80)
     txt_img = fonto.render("Game Over", True, (255, 255, 255))
     txt_rct = txt_img.get_rect()
@@ -92,21 +100,29 @@ def game_over(screen : pg.Surface):
     time.sleep(5)
 
 
-def homing(kk : pg.Rect, bb : pg.Rect) -> tuple[float, float]:
+def homing(kk : pg.Rect, bb : pg.Rect, vx, vy) -> tuple[float, float]:
     """
+    引数:こうかとんRect, 爆弾Rect
+    戻り値:爆弾のvx, vy
+    vx^2 + vy^2 == 50 を満たしている
+    こうかとんと爆弾の距離が300未満の場合減速
     """
+    # ベクトルを計算
     kk_x, kk_y = kk.center
     bb_x, bb_y = bb.center
     dif_x = kk_x - bb_x
     dif_y = kk_y - bb_y
-    #print(dif_x, dif_y)
-    normalizer = ((dif_x**2 + dif_y**2) / 50**(1/2))**(1/2)
+    
+    # ベクトルのノルムを正規化
+    normalizer = ((dif_x**2 + dif_y**2)**(1/2))/(50**(1/2))
     norm_dif_x = dif_x / normalizer
     norm_dif_y = dif_y / normalizer
-    # if((dif_x**2 + dif_y**2)**(1/2) < 300):
-    #     norm_dif_x += -1
-    #     norm_dif_y += -1
-    print((norm_dif_x**2 + norm_dif_y**2)**(1/2))
+
+    # 慣性
+    if((dif_x**2 + dif_y**2)**(1/2) < 300):
+        norm_dif_x *= 0.5
+        norm_dif_y *= 0.5
+    
     return (norm_dif_x, norm_dif_y)
 
 
@@ -175,7 +191,7 @@ def main():
             vy *= -1
         
         # 爆弾の向き変更
-        vx, vy = homing(kk_rct, bomb_rct)
+        vx, vy = homing(kk_rct, bomb_rct, vx, vy)
 
         # 爆弾の加速
         avx = vx*bomb_accs[min(tmr//250, 9)]
@@ -184,7 +200,7 @@ def main():
 
         # こうかとんと爆弾の衝突判定
         if kk_rct.colliderect(bomb_rct):
-            game_over(screen)
+            #game_over(screen)
             return
         
         # こうかとんの向きを変える
