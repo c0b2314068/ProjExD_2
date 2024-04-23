@@ -75,6 +75,10 @@ def main():
             vy *= -1
         bomb_rct.move_ip(vx, vy)
 
+        #こうかとんと爆弾の衝突判定
+        if kk_rct.colliderect(bomb_rct):
+            return
+
         screen.blit(kk_img, kk_rct)
         screen.blit(bomb_sfc, bomb_rct)
         pg.display.update()
