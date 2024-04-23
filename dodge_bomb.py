@@ -23,6 +23,12 @@ def check_bound(obj_rct : pg.Rect) -> tuple[bool, bool]:
     return in_x, in_y
 
 
+def rotate_img(obj_sfc : pg.Surface, dif : list) -> pg.Surface:
+    """
+    """
+    pass
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -47,6 +53,17 @@ def main():
         pg.K_DOWN : (0, 5),
         pg.K_LEFT : (-5, 0),
         pg.K_RIGHT : (5, 0)
+    }
+    #回転辞書
+    ROT = {
+        (-5, 0) : pg.transform.rotozoom(kk_img, 0, 1.0),
+        (-5, 5) : pg.transform.rotozoom(kk_img, 45, 1.0),
+        (0, 5) : pg.transform.rotozoom(kk_img, 90, 1.0),
+        (5, 5) : pg.transform.rotozoom(kk_img, 135, 1.0),
+        (5, 0) : pg.transform.rotozoom(kk_img, 180, 1.0),
+        (5, -5) : pg.transform.rotozoom(kk_img, 225, 1.0),
+        (0, -5) : pg.transform.rotozoom(kk_img, 270, 1.0),
+        (-5, -5) : pg.transform.rotozoom(kk_img, 315, 1.0)
     }
 
     while True:
@@ -83,7 +100,7 @@ def main():
         screen.blit(bomb_sfc, bomb_rct)
         pg.display.update()
         tmr += 1
-        clock.tick(50)
+        clock.tick(60)
 
 
 if __name__ == "__main__":
