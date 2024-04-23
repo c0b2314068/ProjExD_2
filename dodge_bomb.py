@@ -199,7 +199,7 @@ def main():
 
         # こうかとんと爆弾の衝突判定
         if kk_rct.colliderect(bomb_rct):
-            #game_over(screen)
+            game_over(screen)
             return
         
         # こうかとんの向きを変える
