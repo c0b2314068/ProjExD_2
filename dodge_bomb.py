@@ -29,8 +29,11 @@ def rotate_img(obj_img : pg.Surface, dif : list) -> pg.Surface:
     pass
 
 
-def bomb_zoom(obj_img : pg.Surface) -> tuple:
+def bomb_zoom(obj_img : pg.Surface) -> tuple[pg.Surface]:
     """
+    引数:爆弾Surface
+    戻り値:Surfaceの入ったタプル
+    len==10で拡大率の昇順で並んでいる
     """
     obj_imgs = []
     for r in range(1, 11):
@@ -84,11 +87,12 @@ def main():
         (0, -5) : pg.transform.rotozoom(kk_img, 270, 1.0),
         (-5, -5) : pg.transform.rotozoom(kk_img, 315, 1.0)
     }
+    
+    # 加速度リストを取得
+    bomb_accs = bomb_acc()
 
     # 拡大爆弾Surfaceリストを取得
     bomb_imgs = bomb_zoom(bomb_img)
-    # 加速度リストを取得
-    bomb_accs = bomb_acc()
 
     while True:
         for event in pg.event.get():
