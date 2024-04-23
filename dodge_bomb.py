@@ -66,6 +66,38 @@ def bomb_acc() -> tuple:
     return tuple(accs)
 
 
+# def game_over(screen : pg.Surface):
+#     pg.draw.rect(screen, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
+#     screen.set_alpha(50)
+#     clock = pg.time.Clock()
+#     tmr = 0
+#     while(tmr < 300):
+#         tmr += 1
+#         pg.display.update()
+#         clock.tick(60)
+
+
+def homing(kk : pg.Rect, bb : pg.Rect) -> tuple[float, float]:
+    """
+    """
+    kk_x, kk_y = kk.center
+    bb_x, bb_y = bb.center
+    dif_x = kk_x - bb_x
+    dif_y = kk_y - bb_y
+    #print(dif_x, dif_y)
+    normalizer = ((dif_x**2 + dif_y**2) / 50**(1/2))**(1/2)
+    norm_dif_x = dif_x / normalizer
+    norm_dif_y = dif_y / normalizer
+    # if((dif_x**2 + dif_y**2)**(1/2) < 300):
+    #     norm_dif_x += -1
+    #     norm_dif_y += -1
+    print((norm_dif_x**2 + norm_dif_y**2))
+    return (norm_dif_x, norm_dif_y)
+
+
+
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -84,6 +116,7 @@ def main():
 
     clock = pg.time.Clock()
     tmr = 0
+
     # 移動量辞書 {押下キー : (x変化量, y変化量)}
     DIF = {
         pg.K_UP : (0, -5),
@@ -129,6 +162,9 @@ def main():
         if not bomb_in_y:
             vy *= -1
         
+        # 爆弾の向き変更
+        vx, vy = homing(kk_rct, bomb_rct)
+
         # 爆弾の加速
         avx = vx*bomb_accs[min(tmr//250, 9)]
         avy = vy*bomb_accs[min(tmr//300, 9)]
